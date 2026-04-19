@@ -1,0 +1,10 @@
+{
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "learning/.*",
+        "cmd": "python3 ${workspaceFolder}/scripts/fix_broken_lines.py ${file}"
+      }
+    ]
+  }
+}
