@@ -54,6 +54,14 @@
 - It also used old version called `10base2` (10 Mbps, baseband, 2-wire) that used coaxial cables and `10base5` (10 Mbps, baseband, 5-wire) that also used coaxial cables. However, these older standards have largely been replaced by newer technologies such as `Ethernet` and `Wi-Fi`.
 - There also are `SFP` (Small Form-factor Pluggable) and `SFP+` (Small Form-factor Pluggable Plus) which we can connect to an SFP that are used for high-speed network connections, such as those found in data centers and enterprise networks. These modules can support speeds of up to 10 Gbps or higher, making them suitable for high-bandwidth applications.
 
+#### DHCP (Dynamic Host Configuration Protocol)
+- The `Dynamic Host Configuration Protocol` (`DHCP`) is a network protocol used to automatically assign IP addresses and other network configuration parameters to devices on a network. 
+- `DHCP` allows devices to join a network without the need for manual configuration, making it easier to manage and maintain a network. 
+- When a device connects to a network, it sends a `DHCP` request to the `DHCP` server, which then assigns an available IP address and other network settings such as subnet mask, default gateway, and DNS server information. 
+  - This process is known as **DHCP leasing**, and the assigned IP address is typically valid for a specific period of time, after which it may be renewed or reassigned to another device.
+- If you do not set as `DHCP`, you would have to manually configure the IP address and other network settings (Subnet mask, Gateway...) for each device on the network, which can be time-consuming and prone to errors.
+- `DHCP` is widely used in both home and enterprise networks to simplify network management and ensure efficient use of IP addresses.
+
 ---
 
 ### Summary Section (Summary of Notes)

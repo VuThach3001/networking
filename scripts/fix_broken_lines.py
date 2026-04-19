@@ -18,6 +18,11 @@ HEADING = re.compile(r'^\s*#+\s')
 BOLD_HEADING = re.compile(r'^\s*\*\*')
 SEPARATOR = re.compile(r'^\s*---\s*$')
 BLANK = re.compile(r'^\s*$')
+CODE_FENCE = re.compile(r'^\s*```')
+INLINE_FENCED_COMMAND = re.compile(
+    r'```\s*(cmd|bash|sh|zsh|shell|console|powershell|pwsh)\s+([^`\n]+?)\s*```',
+    re.IGNORECASE,
+)
 
 
 def is_continuation(line: str) -> bool:
@@ -28,6 +33,7 @@ def is_continuation(line: str) -> bool:
         or BOLD_HEADING.match(line)
         or LIST_MARKER.match(line)
         or SEPARATOR.match(line)
+        or CODE_FENCE.match(line)
     )
 
 
@@ -44,8 +50,21 @@ def fix_broken_lines(text: str) -> str:
     lines = text.splitlines()
     result = []
     i = 0
+    in_code_fence = False
     while i < len(lines):
         line = lines[i]
+
+        if CODE_FENCE.match(line):
+            in_code_fence = not in_code_fence
+            result.append(line)
+            i += 1
+            continue
+
+        if in_code_fence:
+            result.append(line)
+            i += 1
+            continue
+
         # Keep joining while current line ends without sentence termination
         # and the next line is a continuation
         while (
@@ -54,6 +73,7 @@ def fix_broken_lines(text: str) -> str:
             and not BLANK.match(line)
             and not HEADING.match(line)
             and not SEPARATOR.match(line)
+            and not CODE_FENCE.match(line)
             and is_continuation(lines[i + 1])
         ):
             i += 1
@@ -61,6 +81,17 @@ def fix_broken_lines(text: str) -> str:
         result.append(line)
         i += 1
     return '\n'.join(result)
+
+
+def fix_inline_fenced_commands(text: str) -> str:
+    """Expand one-line fenced command snippets into proper fenced blocks."""
+
+    def _replace(match: re.Match) -> str:
+        lang = match.group(1).lower()
+        command = match.group(2).strip()
+        return f"```{lang}\n{command}\n```"
+
+    return INLINE_FENCED_COMMAND.sub(_replace, text)
 
 
 if __name__ == '__main__':
@@ -78,6 +109,7 @@ if __name__ == '__main__':
         original = f.read()
 
     fixed = fix_bullet_markers(original)
+    fixed = fix_inline_fenced_commands(fixed)
     fixed = fix_broken_lines(fixed)
 
     if fixed != original:
